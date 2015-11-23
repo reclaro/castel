@@ -98,6 +98,7 @@ def configure_logging(config_file):
     log_level = get_config_value(config_file, 'default', 'log_level')
     logging.basicConfig(filename=log_file, level=debug_levels[log_level])
 
+
 def parse_options():
     """ This function manage the options passed to the script
 

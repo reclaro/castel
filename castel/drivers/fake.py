@@ -1,9 +1,10 @@
 from castel.drivers.engine import Engine
 
+
 class Fakeengine(Engine):
     # This is a fake engine class used in the tests
     def get_total_words(self, text_wrapper):
-            return 1
+        return 1
 
     def get_total_lines(self, text_wrapper):
         return 2

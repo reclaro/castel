@@ -97,6 +97,7 @@ class TestStattext(TestCase):
         self.stattext.get_avg_letters_per_word("fake")
         self.assertFalse(mock_avg_letters.called)
 
+
 class TestAvgLetterForWord(TestCase):
     def setUp(self):
         self.stattext = Stattext()
@@ -110,13 +111,13 @@ class TestAvgLetterForWord(TestCase):
         return self.stattext._avg_letters(file_content, precision)
 
     def test_count_letters(self):
-        text =  "This is a good test"
+        text = "This is a good test"
         result = self.do_count_letters(text)
         expected = 15
         self.assertEqual(result, expected)
 
     def test_count_letters_multi_line(self):
-        text =  "This\n is \na good test\n\n\n"
+        text = "This\n is \na good test\n\n\n"
         result = self.do_count_letters(text)
         expected = 15
         self.assertEqual(result, expected)
@@ -140,19 +141,19 @@ class TestAvgLetterForWord(TestCase):
         self.assertEqual(result, expected)
 
     def test_count_digit_as_letters(self):
-        text ="123"
+        text = "123"
         result = self.do_count_letters(text)
         expected = 3
         self.assertEqual(result, expected)
 
     def test_avg_letter_single_line(self):
-        text =  "This is a good test"
+        text = "This is a good test"
         result = self.do_avg_letters(text)
         expected = 3.0
         self.assertEqual(result, expected)
 
     def test_avg_letter_multi_line(self):
-        text =  "This is a good\n test\n\n"
+        text = "This is a good\n test\n\n"
         result = self.do_avg_letters(text)
         expected = 3.0
         self.assertEqual(result, expected)
@@ -257,10 +258,10 @@ class TestCountWords(TestCase):
         self.assertEqual(result, expected)
 
     def test_word_with_pipe(self):
-       text = "this|is a strange word"
-       result = self.do_count_words(text)
-       expected = 4
-       self.assertEqual(result, expected)
+        text = "this|is a strange word"
+        result = self.do_count_words(text)
+        expected = 4
+        self.assertEqual(result, expected)
 
     def test_only_signs(self):
         text = "... ,, : !! | \ +-'"
@@ -284,7 +285,7 @@ class TestFrequentLetter(TestCase):
         self.assertEqual(result, expected)
 
     def test_ascii_count_multi_line(self):
-        text = "a"*2 + "b"*5 +"\n"+"a"*5
+        text = "a"*2 + "b"*5 + "\n"+"a"*5
         result = self.do_most_common_letter(text)
         expected = "a"
         self.assertEqual(result, expected)
@@ -325,8 +326,8 @@ class TestFrequentLetter(TestCase):
     def test_many_most_common_letter(self):
         text = "test is done"
         result = self.do_most_common_letter(text)
-        expected = ['e','s','t']
-        self.assertEqual(sorted(result.replace(" ","")), expected)
+        expected = ['e', 's', 't']
+        self.assertEqual(sorted(result.replace(" ", "")), expected)
 
     def test_unicode_text(self):
         text = "Thíś íś ṕŕéttӳ fúń"
