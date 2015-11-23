@@ -79,9 +79,6 @@ def get_iowrapper(engine_driver, stream_name, encoding):
     except FileNotFoundError:
         print("File \'%s\' not found" % stream_name)
         sys.exit(1)
-    except UnicodeDecodeError:
-        print("File \'%s\' is not in the %s format" % (stream_name, encoding))
-        sys.exit(1)
 
 
 def configure_logging(config_file):
@@ -101,13 +98,13 @@ def configure_logging(config_file):
     log_level = get_config_value(config_file, 'default', 'log_level')
     logging.basicConfig(filename=log_file, level=debug_levels[log_level])
 
+def parse_options():
+    """ This function manage the options passed to the script
 
-def main():
+    The method uses the argparse library to parse the input
+    options defined for the script
     """
-    Main function which parses the options defined and call the
-    methods to the engine driver configured to get the statistics
-    results
-    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument("file", help="Name of the file to parse")
     parser.add_argument("-d",
@@ -127,24 +124,46 @@ def main():
                         default="utf-8",
                         help="Encoding of the input file")
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def get_and_print_results(engine_driver, file_obj):
+    """Call the engine to get and print the results
+    This method call the different method exposed by the driver
+    engine to get back the results.
+    The results are printed to the standard output
+    args:
+        engine_driver: the driver configured to parse the file
+        file_obj: the TextIoWrapper to pass to the engine methods
+    """
+
+    print("number of lines",
+         engine_driver.get_total_lines(file_obj))
+    file_obj.seek(0)
+    print("number of words",
+         engine_driver.get_total_words(file_obj))
+    file_obj.seek(0)
+    print("most common letter",
+         engine_driver.most_common_letter(file_obj))
+    file_obj.seek(0)
+    print("average letter per word",
+         engine_driver.get_avg_letters_per_word(file_obj))
+
+
+def main():
+    """
+    Main function which parses the options defined and call the
+    methods to the engine driver configured to get the statistics
+    results
+    """
+    args = parse_options()
     engine_driver = get_driver(args.config)
     engine_driver.precision = args.decimal
     configure_logging(args.config)
 
     file_obj = get_iowrapper(engine_driver, args.file, args.encoding)
     try:
-        print("number of lines",
-             engine_driver.get_total_lines(file_obj))
-        file_obj.seek(0)
-        print("number of words",
-             engine_driver.get_total_words(file_obj))
-        file_obj.seek(0)
-        print("most common letter",
-             engine_driver.most_common_letter(file_obj))
-        file_obj.seek(0)
-        print("average letter per word",
-             engine_driver.get_avg_letters_per_word(file_obj))
+        get_and_print_results(engine_driver, file_obj)
     except UnicodeDecodeError:
         print("File \'%s\' is not in the %s format" %
               (args.file, args.encoding))

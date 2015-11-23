@@ -1,8 +1,49 @@
 import io
+import tempfile
+from uuid import uuid1
 from unittest import TestCase
 from unittest import mock
 
+from castel import advcounter
+from castel.drivers.fake import Fakeengine
 from castel.drivers.stattext import Stattext
+
+
+class TestAdvCounter(TestCase):
+
+    @mock.patch('sys.exit')
+    def test_get_iowrapper_file_not_found(self, mock_exit):
+        # Trying to open a non existing file
+
+        # we generate an unique string which will be
+        # used as filename to guarantee that the file
+        # doesn't exist
+        self.f_name = str(uuid1(1))
+        advcounter.get_iowrapper(Fakeengine(),
+                                 self.f_name,
+                                 "utf-8")
+        mock_exit.assert_called_with(1)
+
+    def test_wrong_unicode_format(self):
+        """We write a temporary file in an UTF-16 format
+        and then we call the fucntion to get results opening
+        a file in the utf-8 format, we expect that the tool
+        return an UnicodeDecodeError exception
+        """
+        # write an utf-16 string
+        content = bytes("test", 'utf-16')
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            fname = tmpdirname + "/test"
+            # create a temporary file with the utf-16 string
+            with open(fname, "wb") as f:
+                f.write(content)
+            with open(fname, encoding="utf-8") as f:
+                # we open the file with the wrong encoding
+                # so an excpetion is raised
+                self.assertRaises(UnicodeDecodeError,
+                                  advcounter.get_and_print_results,
+                                  Stattext(), f)
+
 
 class TestStattext(TestCase):
     def setUp(self):
