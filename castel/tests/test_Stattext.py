@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import io
 import tempfile
 from uuid import uuid1
